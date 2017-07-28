@@ -1,0 +1,22 @@
+version: '3'
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - DEFAULT_HOST=gregoriomelo.com
+    restart: always
+
+  blog:
+    build:
+      context: .
+      dockerfile: b
+    environment:
+      - VIRTUAL_HOST=blog.gregoriomelo.com,gregoriomelo.com
+      - VIRTUAL_PORT=443
+    restart: always
