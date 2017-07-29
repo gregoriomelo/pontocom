@@ -17,6 +17,8 @@ services:
     container_name: registry
     ports:
       - "5000:5000"
+    environment:
+      - VIRTUAL_HOST=docker-registry.gregoriomelo.com
 
   gitlab:
     image: gitlab/gitlab-ce:9.4.1-ce.0
