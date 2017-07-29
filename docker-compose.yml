@@ -18,6 +18,26 @@ services:
     ports:
       - "5000:5000"
 
+  gitlab:
+    image: gitlab/gitlab-ce:9.4.1-ce.0
+    container_name: gitlab
+    hostname: gitlab.gregoriomelo.com
+    ports:
+      - "80"
+      - "443"
+      - "22"
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+    environment:
+      VIRTUAL_HOST: gitlab.gregoriomelo.com
+      VIRTUAL_PORT: 80
+      VIRTUAL_PROTO: http
+      GITLAB_OMNIBUS_CONFIG: |
+            external_url 'http://gitlab.gregoriomelo.com'
+    restart: always
+
   blog:
     build:
       context: .
