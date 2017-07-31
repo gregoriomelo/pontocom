@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
@@ -7,44 +7,33 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - ./certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
     environment:
       - DEFAULT_HOST=gregoriomelo.com
     restart: always
 
-  registry:
-    image: registry:2
-    container_name: registry
-    ports:
-      - "5000:5000"
-    environment:
-      - VIRTUAL_HOST=docker-registry.gregoriomelo.com
-
-  gitlab:
-    image: gitlab/gitlab-ce:9.4.1-ce.0
-    container_name: gitlab
-    hostname: gitlab.gregoriomelo.com
-    ports:
-      - "80"
-      - "443"
-      - "22"
+  letsencrypt-nginx-proxy:
+    container_name: letsencrypt-nginx-proxy
+    image: jrcs/letsencrypt-nginx-proxy-companion
     volumes:
-      - ./gitlab/config:/etc/gitlab
-      - ./gitlab/logs:/var/log/gitlab
-      - ./gitlab/data:/var/opt/gitlab
-    environment:
-      VIRTUAL_HOST: gitlab.gregoriomelo.com
-      VIRTUAL_PORT: 80
-      VIRTUAL_PROTO: http
-      GITLAB_OMNIBUS_CONFIG: |
-            external_url 'http://gitlab.gregoriomelo.com'
-    restart: always
+      - ./certs:/etc/nginx/certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    volumes_from:
+      - nginx-proxy
 
   blog:
     build:
       context: .
       dockerfile: b
+    container_name: blog
+    ports:
+      - "80"
     environment:
       - VIRTUAL_HOST=blog.gregoriomelo.com,gregoriomelo.com
-      - VIRTUAL_PORT=443
+      - VIRTUAL_PORT=80
+      - LETSENCRYPT_EMAIL=gregorio@gregoriomelo.com
+      - LETSENCRYPT_HOST=gregoriomelo.com,blog.gregoriomelo.com
     restart: always
