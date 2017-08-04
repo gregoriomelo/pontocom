@@ -25,15 +25,16 @@ services:
       - nginx-proxy
 
   blog:
-    build:
-      context: .
-      dockerfile: b
+    image: gregoriomelo/blog
     container_name: blog
     ports:
       - "80"
+    volumes:
+      - ./certs:/etc/nginx/certs
     environment:
       - VIRTUAL_HOST=blog.gregoriomelo.com,gregoriomelo.com
       - VIRTUAL_PORT=80
+      - VIRTUAL_PROTO=http
       - LETSENCRYPT_EMAIL=gregorio@gregoriomelo.com
       - LETSENCRYPT_HOST=gregoriomelo.com,blog.gregoriomelo.com
     restart: always
