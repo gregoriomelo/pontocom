@@ -42,11 +42,11 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:9.4.1-ce.0
     container_name: gitlab
-    hostname: gitlab.gregoriomelo.com
+    hostname: gitlab
     ports:
       - "80"
       - "443"
-      - "22"
+      - "22:22"
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
@@ -60,5 +60,16 @@ services:
       LETSENCRYPT_HOST: gitlab.gregoriomelo.com,git.gregoriomelo.com
       GITLAB_OMNIBUS_CONFIG: |
             external_url 'https://gitlab.gregoriomelo.com'
+    restart: always
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine-bleeding
+    container_name: gitlab-runner
+    hostname: gitlab-runner
+    links:
+      - "gitlab:gitlab.gregoriomelo.com"
+    volumes:
+      - ./gitlab-runner:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/docker.sock:ro
     restart: always
 
