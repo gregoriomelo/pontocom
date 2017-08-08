@@ -12,7 +12,7 @@
     home: "/home/{{ username }}"
     state: present
 
-- name: Set authorized key took from file
+- name: Set authorized key taken from file
   authorized_key:
     user: "{{ username }}"
     state: present

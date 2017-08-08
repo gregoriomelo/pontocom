@@ -1,4 +1,5 @@
 - hosts: all
+
   vars:
     username: gregoriomelo
     setup_from: "{{ lookup('env', 'SETUP_FROM') }}"
@@ -15,6 +16,12 @@
       - "/home/{{ username }}/gitlab"
       - "/home/{{ username }}/gitlab-runner"
     backup_mysql: false
+
+  pre_tasks:
+    - name: "Check whether the right params are set"
+      fail:
+        msg: "Please set up the following environment variables: SETUP_FROM, SETUP_TO and SSH_KEY_PATH"
+      when: (setup_from == "") or (setup_to == "") or (ssh_key_path == "")
 
   roles:
     - name: geerlingguy.docker
