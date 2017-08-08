@@ -1,0 +1,55 @@
+---
+- name: Adds admin group
+  group:
+    name: "{{ username}}"
+    state: present
+
+- name: Adds admin user
+  user:
+    name: "{{ username }}"
+    groups: [sudo, "{{ username}}"]
+    shell: /bin/bash
+    home: "/home/{{ username }}"
+    state: present
+
+- name: Set authorized key took from file
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ lookup('file', ssh_key_path) }}"
+
+- name: Copy initial files
+  copy:
+    src: "{{ setup_from }}/docker-compose.yml"
+    dest: "{{ setup_to }}/docker-compose.yml"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Write swap file
+  command: fallocate -l {{ swapfile_size }} {{ swapfile_location }} creates={{ swapfile_location }}
+  register: write_swapfile
+  when: swapfile_size != false
+
+- name: Set swapfile permissions
+  file: path={{ swapfile_location }} mode=0600
+  when: swapfile_size != false
+
+- name: Create swapfile
+  command: mkswap {{ swapfile_location }}
+  register: create_swapfile
+  when: swapfile_size != false and write_swapfile.changed
+
+- name: Enable swapfile
+  command: swapon {{ swapfile_location }}
+  when: swapfile_size != false and create_swapfile.changed
+
+- name: Add swapfile to /etc/fstab
+  lineinfile: dest=/etc/fstab line="{{ swapfile_location }}   none    swap    sw    0   0" state=present
+  when: swapfile_size != false
+
+- name: Bring up docker containers
+  command: docker-compose up -d
+  become: true
+  args:
+    chdir: "{{ setup_to }}"
+

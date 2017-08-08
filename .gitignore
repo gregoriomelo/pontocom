@@ -1,3 +1,5 @@
 certs/
 gitlab/
 gitlab-runner/
+.vagrant/
+*.log

@@ -1,0 +1,25 @@
+- hosts: all
+  vars:
+    username: gregoriomelo
+    setup_from: "{{ lookup('env', 'SETUP_FROM') }}"
+    setup_to: "{{ lookup('env', 'SETUP_TO') }}"
+    ssh_key_path: "{{ lookup('env', 'SSH_KEY_PATH') }}"
+
+    swapfile_location: /swapfile
+    swapfile_size: 4G
+    swapfile_swappiness: 10
+    swapfile_vfs_cache_pressure: 50
+
+    backup_user: "{{ username }}"
+    backup_directories:
+      - "/home/{{ username }}/gitlab"
+      - "/home/{{ username }}/gitlab-runner"
+    backup_mysql: false
+
+  roles:
+    - name: geerlingguy.docker
+    - name: gregoriomelo.com
+    - name: geerlingguy.security
+      security_sudoers_passwordless: ["{{ username }}"]
+      become: true
+    - name: geerlingguy.backup
