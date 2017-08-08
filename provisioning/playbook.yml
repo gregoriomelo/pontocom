@@ -1,7 +1,7 @@
 - hosts: all
 
   vars:
-    username: gregoriomelo
+    username: "{{ lookup('env', 'USERNAME') }}"
     setup_from: "{{ lookup('env', 'SETUP_FROM') }}"
     setup_to: "{{ lookup('env', 'SETUP_TO') }}"
     ssh_key_path: "{{ lookup('env', 'SSH_KEY_PATH') }}"
@@ -20,8 +20,8 @@
   pre_tasks:
     - name: "Check whether the right params are set"
       fail:
-        msg: "Please set up the following environment variables: SETUP_FROM, SETUP_TO and SSH_KEY_PATH"
-      when: (setup_from == "") or (setup_to == "") or (ssh_key_path == "")
+        msg: "Please set up the following environment variables: USERNAME, SETUP_FROM, SETUP_TO and SSH_KEY_PATH"
+      when: (username == "") or (setup_from == "") or (setup_to == "") or (ssh_key_path == "")
 
   roles:
     - name: geerlingguy.docker
