@@ -46,7 +46,7 @@ services:
     ports:
       - "80"
       - "443"
-      - "22:22"
+      - "2222:22"
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
@@ -60,6 +60,7 @@ services:
       LETSENCRYPT_HOST: gitlab.gregoriomelo.com,git.gregoriomelo.com
       GITLAB_OMNIBUS_CONFIG: |
             external_url 'https://gitlab.gregoriomelo.com'
+            gitlab_shell_ssh_port 2222
     restart: always
 
   gitlab-runner:
