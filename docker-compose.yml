@@ -71,6 +71,6 @@ services:
       - "gitlab:gitlab.gregoriomelo.com"
     volumes:
       - ./gitlab-runner:/etc/gitlab-runner
-      - /var/run/docker.sock:/var/docker.sock:ro
+      - /var/run/docker.sock:/var/docker.sock
     restart: always
 
