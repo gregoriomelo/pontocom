@@ -1,0 +1,19 @@
+image: alpine
+
+services:
+  - docker:dind
+
+stages:
+  - prod
+
+before_script:
+  - apk add --no-cache ssh
+  - mkdir -p ~/.ssh
+  - echo "$DEPLOYMENT_PRIVATE_KEY" > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+
+update-production:
+  stage: prod
+  only: prod
+  script:
+    - ./deploy_blog.sh ~/.ssh/id_rsa gregoriomelo gregoriomelo.com gregoriomelo/blog blog
