@@ -14,6 +14,5 @@ before_script:
 
 update-production:
   stage: prod
-  only: ["prod"]
   script:
     - ./deploy_blog.sh ~/.ssh/id_rsa gregoriomelo gregoriomelo.com gregoriomelo/blog blog
