@@ -5,7 +5,6 @@
     setup_from: "{{ lookup('env', 'SETUP_FROM') }}"
     setup_to: "{{ lookup('env', 'SETUP_TO') }}"
     ssh_key_path: "{{ lookup('env', 'SSH_KEY_PATH') }}"
-    deploy_ssh_key_path: "{{ lookup('env', 'DEPLOY_SSH_KEY_PATH') }}"
 
     swapfile_location: /swapfile
     swapfile_size: 4G
@@ -21,13 +20,13 @@
   pre_tasks:
     - name: "Check whether the right params are set"
       fail:
-        msg: "Please set up the following environment variables: REMOTE_USERNAME, SETUP_FROM, SETUP_TO, SSH_KEY_PATH and DEPLOY_SSH_KEY_PATH"
-      when: (remote_username == "") or (setup_from == "") or (setup_to == "") or (ssh_key_path == "") or (deploy_ssh_key_path == "")
+        msg: "Please set up the following environment variables: REMOTE_USERNAME, SETUP_FROM, SETUP_TO and SSH_KEY_PATH"
+      when: (remote_username == "") or (setup_from == "") or (setup_to == "") or (ssh_key_path == "")
 
   roles:
     - name: geerlingguy.docker
-    - name: gregoriomelo.com
     - name: geerlingguy.security
-      security_sudoers_passwordless: ["{{ remote_username }}", deploy]
+      security_sudoers_passwordless: ["{{ remote_username }}"]
       become: true
+    - name: gregoriomelo.com
     - name: geerlingguy.backup

@@ -18,6 +18,14 @@
     state: present
     key: "{{ lookup('file', ssh_key_path) }}"
 
+- name: Creates deployment folder
+  file:
+    path: "{{ setup_to }}"
+    state: directory
+    owner: "{{ remote_username }}"
+    mode: 0755
+  become: true
+
 - name: Copy initial files
   copy:
     src: "{{ setup_from }}/docker-compose.yml"
