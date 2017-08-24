@@ -1,20 +1,20 @@
 ---
 - name: Adds admin group
   group:
-    name: "{{ username}}"
+    name: "{{ remote_username}}"
     state: present
 
 - name: Adds admin user
   user:
-    name: "{{ username }}"
-    groups: [sudo, "{{ username}}"]
+    name: "{{ remote_username }}"
+    groups: [sudo, "{{ remote_username}}"]
     shell: /bin/bash
-    home: "/home/{{ username }}"
+    home: "/home/{{ remote_username }}"
     state: present
 
 - name: Set authorized key taken from file
   authorized_key:
-    user: "{{ username }}"
+    user: "{{ remote_username }}"
     state: present
     key: "{{ lookup('file', ssh_key_path) }}"
 
@@ -22,8 +22,9 @@
   copy:
     src: "{{ setup_from }}/docker-compose.yml"
     dest: "{{ setup_to }}/docker-compose.yml"
-    owner: "{{ username }}"
-    group: "{{ username }}"
+    owner: "{{ remote_username }}"
+    group: "{{ remote_username }}"
+  become: true
 
 - name: Write swap file
   command: fallocate -l {{ swapfile_size }} {{ swapfile_location }} creates={{ swapfile_location }}

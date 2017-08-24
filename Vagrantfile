@@ -16,9 +16,4 @@ Vagrant.configure("2") do |config|
     vb.memory = "2048"
   end
 
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "provisioning/playbook.yml"
-    ansible.extra_vars = { ansible_python_interpreter: "/usr/bin/python3" }
-    ansible.sudo = true
-  end
 end
