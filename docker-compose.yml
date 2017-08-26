@@ -73,4 +73,5 @@ services:
       - ./gitlab-runner:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
+    priviledged: true
 
